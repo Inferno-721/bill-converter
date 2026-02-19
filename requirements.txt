@@ -1,0 +1,16 @@
+# UI
+streamlit==1.33.0
+
+# PDF text extraction
+pdfplumber==0.11.0
+pypdf==4.2.0
+
+# Template rendering
+jinja2==3.1.4
+
+# HTML → PDF
+xhtml2pdf==0.2.16
+
+# Utilities
+python-dotenv==1.0.1
+pydantic==2.7.1

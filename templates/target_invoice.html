@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #333; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .seller-details, .customer-details { width: 48%; display: inline-block; vertical-align: top; }
+        .invoice-meta { text-align: right; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .totals { width: 300px; float: right; margin-top: 20px; }
+        .totals-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .bank-details { margin-top: 40px; clear: both; border-top: 1px solid #eee; padding-top: 10px; }
+        h1 { color: #2c3e50; }
+        h3 { border-bottom: 2px solid #2c3e50; padding-bottom: 5px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="seller-details">
+            <h1>{{ invoice.seller.name }}</h1>
+            <p>{{ invoice.seller.address }}</p>
+            {% if invoice.seller.email %}<p>Email: {{ invoice.seller.email }}</p>{% endif %}
+            {% if invoice.seller.mobile %}<p>Phone: {{ invoice.seller.mobile }}</p>{% endif %}
+            {% if invoice.seller.gst %}<p>GSTIN: {{ invoice.seller.gst }}</p>{% endif %}
+        </div>
+        
+        <div class="invoice-meta">
+            <h2>INVOICE</h2>
+            <p><strong>Invoice #:</strong> {{ invoice.invoice_meta.invoice_number }}</p>
+            <p><strong>Date:</strong> {{ invoice.invoice_meta.invoice_date }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="customer-details">
+        <h3>Bill To:</h3>
+        <p><strong>{{ invoice.customer.name }}</strong></p>
+        <p>{{ invoice.customer.address }}</p>
+        {% if invoice.customer.city %}<p>{{ invoice.customer.city }}, {{ invoice.customer.state }}</p>{% endif %}
+        {% if invoice.customer.gst %}<p>GSTIN: {{ invoice.customer.gst }}</p>{% endif %}
+    </div>
+
+    <br style="clear: both;">
+
+    <h3>Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>HSN</th>
+                <th>Batch</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.items %}
+            <tr>
+                <td>{{ item.part_name }}</td>
+                <td>{{ item.hsn_code or '-' }}</td>
+                <td>{{ item.batch_no or '-' }}</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ item.rate }}</td>
+                <td>{{ item.amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <div class="totals-row"><strong>Total Taxable:</strong> <span>{{ invoice.totals.taxable_total }}</span></div>
+        <div class="totals-row"><strong>Total Tax:</strong> <span>{{ invoice.totals.invoice_total - invoice.totals.taxable_total }}</span></div>
+        <div class="totals-row" style="font-size: 1.2em; border-top: 2px solid #000; padding-top: 5px;">
+            <strong>Grand Total:</strong> <span>{{ invoice.totals.invoice_total }}</span>
+        </div>
+        {% if invoice.totals.invoice_total_words %}
+        <p><small>{{ invoice.totals.invoice_total_words }}</small></p>
+        {% endif %}
+    </div>
+
+    {% if invoice.bank_details %}
+    <div class="bank-details">
+        <h3>Bank Details</h3>
+        <p><strong>Bank:</strong> {{ invoice.bank_details.bank_name }}</p>
+        <p><strong>Account Name:</strong> {{ invoice.bank_details.account_name }}</p>
+        <p><strong>Account No:</strong> {{ invoice.bank_details.account_no }}</p>
+        <p><strong>IFSC:</strong> {{ invoice.bank_details.ifsc }}</p>
+    </div>
+    {% endif %}
+
+</body>
+</html>
